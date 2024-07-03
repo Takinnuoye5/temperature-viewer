@@ -3,7 +3,6 @@ import httpx
 import os
 from dotenv import load_dotenv
 
-
 load_dotenv()
 
 app = FastAPI()
@@ -17,6 +16,7 @@ async def welcome_guest(request: Request, visitor_name: str):
 
     city = "Unknown location"
     temperature = "unknown temperature"
+    lat, lon = None, None  # Initialize lat and lon with None
 
     location_url = f"https://ipinfo.io/{client_ip}/json?token={IPINFO_TOKEN}"
     async with httpx.AsyncClient() as client:
