@@ -11,7 +11,7 @@ IPINFO_TOKEN = os.getenv('IPINFO_TOKEN')
 OPENWEATHERMAP_API_KEY = os.getenv('OPENWEATHERMAP_API_KEY')
 
 @app.get("/api/hello")
-async def welcome_guest(request: Request, visitor_name: str):
+async def welcome_guest(request: Request, visitor_name: str = "Timothy"):
     client_ip = request.client.host
 
     city = "Unknown location"
@@ -22,7 +22,7 @@ async def welcome_guest(request: Request, visitor_name: str):
     async with httpx.AsyncClient() as client:
         try:
             location_response = await client.get(location_url, headers={"Accept": "application/json"})
-            location_response.raise_for_status()  
+            location_response.raise_for_status()
             location_data = location_response.json()
 
             city = location_data.get("city", "Unknown location")
@@ -36,7 +36,7 @@ async def welcome_guest(request: Request, visitor_name: str):
         async with httpx.AsyncClient() as client:
             try:
                 weather_response = await client.get(weather_url)
-                weather_response.raise_for_status()  
+                weather_response.raise_for_status()
                 weather_data = weather_response.json()
 
                 temperature = weather_data.get("main", {}).get("temp", "unknown temperature")
@@ -50,3 +50,7 @@ async def welcome_guest(request: Request, visitor_name: str):
         "location": city,
         "greeting": greeting
     }
+
+@app.get("/")
+async def root(request: Request):
+    return await welcome_guest(request)
